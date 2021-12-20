@@ -1,6 +1,6 @@
-//  ======================
-//  COMMAND LINE UTILITIES
-//  ======================
+//  ====
+//  ARGS
+//  ====
 
 /**
  * Retrieves the cli-arguments from process.argv
