@@ -3,14 +3,34 @@
 //  =================
 
 //  ESCAPE CODES : Unicode | Ctrl | Octal  | Hexadecimal | Decimal
-export type escapeCode = '\u001b' | '^[' | '\033' | '\x1b' | '27'
+export enum EscapeCode {
+    Unicode = '\u001b',
+    Ctrl = '^[',
+    Octal = '\033',
+    Hexadecimal = '\x1b',
+    Decimal = '27'
+}
 
-export const ESC: escapeCode = '\u001b'
+export const ESC: EscapeCode = EscapeCode.Unicode
 export const OSC = '\u001B]'
 export const BEL = '\u0007'
 export const RESET = `${ESC}[0m`
 
+//  HELPER FUNCTION
+//  ===============
+
+/** Check whether Node.js is running with a text-terminal context attached */
+export const isTTY = () => { if (!process.stdout.isTTY) { throw Error('Not running with a text-terminal context attached') } }
+
+/**
+ * Wrap ANSICode around string
+ * @param str text to wrap string around
+ * @param tuple ansiCode tuple to wrap
+ */
 const wrap = (str: string, tuple: [number, number]) => `${ESC}[${tuple[0]}m${str}${ESC}[${tuple[1]}m`
+
+//  ANSI COLOR
+//  ==========
 
 type ANSIColor =
     | 'black'
@@ -35,9 +55,16 @@ const color: Record<ANSIColor, [number, number]> = {
     default: [39, 39],
 }
 
+/** Background offset */
 const bgOffset = 10
+/** Bright-color offset */
 const brightOffset = 60
 
+/**
+ * Initializes ANSIColor code functions
+ * @param clr ANSIColor code
+ * @returns Function to apply colors
+ */
 const ansiColor = (clr: ANSIColor) => {
     const c = (str: string) => wrap(str, color[clr])
     c.bg = (str: string) => wrap(str, color[clr].map(x => x + bgOffset) as [number, number])
@@ -46,17 +73,29 @@ const ansiColor = (clr: ANSIColor) => {
     return c
 }
 
+/** Colors the string black */
 export const black = ansiColor('black')
+/** Colors the string red */
 export const red = ansiColor('red')
+/** Colors the string green */
 export const green = ansiColor('green')
+/** Colors the string yellow */
 export const yellow = ansiColor('yellow')
+/** Colors the string blue */
 export const blue = ansiColor('blue')
+/** Colors the string magenta */
 export const magenta = ansiColor('magenta')
+/** Colors the string cyan */
 export const cyan = ansiColor('cyan')
+/** Colors the string white */
 export const white = ansiColor('white')
 
+/** Colors the string with the given rgb values */
 export const rgb = (str: string, [r, g, b]: [number, number, number]) => `${ESC}[38;2;${r};${g};${b}m${str}${RESET}`
 rgb.bg = (str: string, [r, g, b]: [number, number, number]) => `${ESC}[48;2;${r};${g};${b}m${str}${RESET}`
+
+//  ANSI STYLE
+//  ==========
 
 type ANSIStyle =
     | 'bold'
@@ -79,32 +118,61 @@ export const style: Record<ANSIStyle, [number, number]> = {
     strikethrough: [9, 29],
 }
 
+/** Makes the string bold */
 export const bold = (str: string) => wrap(str, style.bold)
+/** Makes the string faint */
 export const faint = (str: string) => wrap(str, style.faint)
+/** Makes the string italic */
 export const italic = (str: string) => wrap(str, style.italic)
+/** Makes the string underlined */
 export const underline = (str: string) => wrap(str, style.underline)
+/** Makes the string blink */
 export const blinking = (str: string) => wrap(str, style.blinking)
+/** Inverts the string's colors */
 export const inverse = (str: string) => wrap(str, style.inverse)
+/** Hides the string */
 export const hidden = (str: string) => wrap(str, style.hidden)
+/** Strikethrough a string */
 export const strikethrough = (str: string) => wrap(str, style.strikethrough)
 
+//  CURSOR MANIPULATION
+//  ===================
+
+/** ANSI Cursor Manipulation */
 export const cursor = {
+    /** Moves the cursor back to home position (0, 0) */
     toHome: `${ESC}[H`,
+    /** Moves the cursor back to given row and column */
     toPos: (row: number = 0, column: number = 0) => `${ESC}[${row};${column}H`,
+    /** Moves the cursor up by n number of lines */
     up: (n: number = 1) => `${ESC}[${n}A`,
+    /** Moves the cursor down by n number of lines */
     down: (n: number = 1) => `${ESC}[${n}B`,
+    /** Moves the cursor right by n number of lines */
     right: (n: number = 1) => `${ESC}[${n}C`,
+    /** Moves the cursor left by n number of lines */
     left: (n: number = 1) => `${ESC}[${n}D`,
+    /** Moves the cursor to the nth next line */
     toNextLine: (n: number = 1) => `${ESC}[${n}E`,
+    /** Moves the cursor to the nth prev line */
     toPrevLine: (n: number = 1) => `${ESC}[${n}F`,
+    /** Moves the cursor to a given column position */
     toColumn: (n: number = 0) => `${ESC}[${n}G`,
+    /** Returns the current cursor position */
     requestPosition: `${ESC}[6n`,
+    /** Makes the cursor visible */
     show: `${ESC}[?25h`,
+    /** Makes the cursor invisible */
     hide: `${ESC}[?25l`,
     //  The following commands have not been standardized and may have different functionality across different terminal applications. DEC Sequences are recommended.
-    save: (mode: 'DEC' | 'SOC' = 'DEC') => mode === 'DEC' ? `${ESC}7` : `${ESC}[s`,   //  Save the current cursor position
-    restore: (mode: 'DEC' | 'SOC') => mode === 'DEC' ? `${ESC}8` : `${ESC}[u`    //  Restores the cursor to the last saved position
+    /** Saves the current cursor position */
+    save: (mode: 'DEC' | 'SOC' = 'DEC') => mode === 'DEC' ? `${ESC}7` : `${ESC}[s`,
+    /** Restores the current cursor position */
+    restore: (mode: 'DEC' | 'SOC') => mode === 'DEC' ? `${ESC}8` : `${ESC}[u`
 }
+
+//  CLEAR
+//  =====
 
 export const clear = {
     screen: `${ESC}[J`,
@@ -116,6 +184,9 @@ export const clear = {
     lineToCursor: `${ESC}[1K`,
     entireLine: `${ESC}[2K`,
 }
+
+//  MISCELLANEOUS
+//  =============
 
 export const link = (text: string, url: string) => `${OSC}8;;${url}${BEL}${text}${OSC}8;;${BEL}` //  Returns a link
 
@@ -129,6 +200,34 @@ export const screen = {
 export const altBuffer = {
     enable: `${ESC}[?1049h`,
     disable: `${ESC}[?1049l`
+}
+
+//  ============
+//  ANSI BUILDER
+//  ============
+export class ANSI {
+    private BUFFER = ''
+
+    constructor(str?: string) {
+        isTTY()
+        this.BUFFER = str || ''
+    }
+
+    write = (str: string) => { this.BUFFER += str; return this }
+    pipe = (...fns: ((s: string) => string)[]) => (str: string) => { this.BUFFER += fns.reduce((acc, curr) => curr(acc), str); return this }
+
+    get = () => {
+        const res = this.BUFFER
+        this.BUFFER = ''
+        return res
+    }
+
+    flush = () => {
+        process.stdout.write(this.BUFFER)
+        this.BUFFER = ''
+        return this
+    }
+
 }
 
 console.log(`${inverse(' Hello ')} ${bold(rgb.bg(' World ', [224, 21, 221]))} ${yellow('!!!')}`)

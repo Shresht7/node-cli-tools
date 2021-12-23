@@ -85,5 +85,3 @@ export const parseArguments = (...args: string[]): ParsedArguments => {
 
 //TODO: Write proper tests
 console.log(parseArguments('argument1', 'argument2', '--argument3', 'value3', '--argument4=15', 'argument5', '-a', '-b=false', '--argument6', '--no-argument7=this'))
-
-//TODO: Add ANSI package
