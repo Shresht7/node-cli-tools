@@ -1,4 +1,4 @@
-# CLI-Utils
+# CLI-Tools
 -----------
 
-Command line utilities
+Command line tools and utilities.
