@@ -205,6 +205,7 @@ export const altBuffer = {
 //  ============
 //  ANSI BUILDER
 //  ============
+
 export class ANSI {
     private BUFFER = ''
 
@@ -230,4 +231,43 @@ export class ANSI {
 
 }
 
-console.log(`${inverse(' Hello ')} ${bold(rgb.bg(' World ', [224, 21, 221]))} ${yellow('!!!')}`)
+//  RUN
+//  ===
+
+export class Renderer {
+
+    private setup = () => { }
+    private draw = () => { }
+
+    constructor({ setup, draw }: { setup: () => void, draw: () => void }) {
+        isTTY()
+
+        process.stdout.write(cursor.hide)
+        process.stdout.write(clear.entireScreen)
+
+        this.setup = setup
+        this.draw = draw
+
+        process.on('SIGINT', this.stop)
+        process.stdin.on('data', this.stop)
+        process.stdout.on('resize', this.stop)
+
+    }
+
+    private _nextFrame = () => {
+        this.draw()
+        setImmediate(this._nextFrame)
+    }
+
+    run = () => {
+        this.setup()
+        setImmediate(this._nextFrame)
+    }
+
+    stop = () => {
+        process.stdout.write(clear.entireScreen)
+        process.stdout.write(cursor.show)
+        process.exit(1)
+    }
+
+}
