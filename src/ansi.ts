@@ -217,10 +217,14 @@ export class ANSI {
     write = (str: string) => { this.BUFFER += str; return this }
     pipe = (...fns: ((s: string) => string)[]) => (str: string) => { this.BUFFER += fns.reduce((acc, curr) => curr(acc), str); return this }
 
-    get = () => {
-        const res = this.BUFFER
+    get value() {
+        const ret = this.BUFFER
         this.BUFFER = ''
-        return res
+        return ret
+    }
+
+    set value(str: string) {
+        this.BUFFER = str
     }
 
     flush = () => {
@@ -251,7 +255,6 @@ export class Renderer {
         process.on('SIGINT', this.stop)
         process.stdin.on('data', this.stop)
         process.stdout.on('resize', this.stop)
-
     }
 
     private _nextFrame = () => {
