@@ -222,35 +222,6 @@ export const altBuffer = {
 //  ANSI BUILDER
 //  ============
 
-export class ANSI {
-    private BUFFER = ''
-
-    constructor(str?: string) {
-        isTTY()
-        this.BUFFER = str || ''
-    }
-
-    write = (str: string) => { this.BUFFER += str; return this }
-    pipe = (...fns: ((s: string) => string)[]) => (str: string) => { this.BUFFER += fns.reduce((acc, curr) => curr(acc), str); return this }
-
-    get value() {
-        const ret = this.BUFFER
-        this.BUFFER = ''
-        return ret
-    }
-
-    set value(str: string) {
-        this.BUFFER = str
-    }
-
-    flush = () => {
-        process.stdout.write(this.BUFFER)
-        this.BUFFER = ''
-        return this
-    }
-
-}
-
 /**
  * ANSI template string builder
  * 
@@ -274,8 +245,9 @@ export const ansi = (templateStr: TemplateStringsArray, ...rest: (string | ((str
     })
 }
 
-//  RUN
-//  ===
+//  ========
+//  RENDERER
+//  ========
 
 export class Renderer {
 
