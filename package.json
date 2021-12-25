@@ -1,13 +1,17 @@
 {
   "name": "cli-tools",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Command line tools and utilities",
+  "main": "lib",
   "scripts": {
     "tsc": "tsc",
     "dev": "tsc -w"
   },
   "author": "Shresht7",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shresht7/cli-tools.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^17.0.0",
