@@ -122,7 +122,7 @@ type ANSIStyle =
     | 'strikethrough'
 
 export const style: Record<ANSIStyle, [number, number]> = {
-    bold: [1, 21],
+    bold: [1, 22],  //  21 doesn't work for some reason, 22 does the trick though
     faint: [2, 22],
     italic: [3, 23],
     underline: [4, 24],
