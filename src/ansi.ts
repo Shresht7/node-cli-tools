@@ -46,7 +46,7 @@ export const compose = (...fns: ((s: string) => string)[]) => (s: string) => fns
 //  ANSI COLOR
 //  ==========
 
-type ANSIColor =
+export type ANSIColor =
     | 'black'
     | 'red'
     | 'green'
@@ -79,7 +79,7 @@ const brightOffset = 60
  * @param clr ANSIColor code
  * @returns Function to apply colors
  */
-const ansiColor = (clr: ANSIColor) => {
+export const ansiColor = (clr: ANSIColor) => {
     const c = (str: string) => wrap(str, color[clr])
     c.bg = (str: string) => wrap(str, color[clr].map(x => x + bgOffset) as [number, number])
     c.bright = (str: string) => wrap(str, color[clr].map(x => x + brightOffset) as [number, number])
