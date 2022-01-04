@@ -251,14 +251,18 @@ export const ansi = (templateStr: TemplateStringsArray, ...rest: (string | ((str
 
 export class Renderer {
 
+    private fps: number = 1000 / 60
+
     private setup = () => { }
     private draw = () => { }
 
-    constructor({ setup, draw }: { setup: () => void, draw: () => void }) {
+    constructor({ setup, draw, fps }: { setup: () => void, draw: () => void, fps: number }) {
         isTTY()
 
         process.stdout.write(cursor.hide)
         process.stdout.write(clear.entireScreen)
+
+        this.fps = fps || (1000 / 60)
 
         this.setup = setup
         this.draw = draw
@@ -276,6 +280,11 @@ export class Renderer {
     run = () => {
         this.setup()
         setImmediate(this._nextFrame)
+    }
+
+    runInterval = () => {
+        this.setup()
+        setInterval(() => this.draw(), this.fps)
     }
 
     stop = () => {
