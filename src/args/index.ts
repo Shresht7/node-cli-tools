@@ -1,12 +1,10 @@
-import { getArguments } from './getArguments'
-
 //  ====
 //  ARGS
 //  ====
 
 type ParsedArguments = {
     arguments: string[],
-    flags: { [key: string]: any }
+    flags: Record<string, string | number | boolean>
 }
 
 /**
@@ -14,11 +12,6 @@ type ParsedArguments = {
  * @param args Array of CLI arguments
  */
 export const parseArguments = (...args: string[]): ParsedArguments => {
-
-    //  Get arguments from process.argv if none are passed int
-    if (!args || !args.length) {
-        args = getArguments()
-    }
 
     //  Handle variadic arguments as well as a single array
     if (args.length === 1 && Array.isArray(args[0])) {
