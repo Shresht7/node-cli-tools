@@ -1,12 +1,8 @@
+import { getArguments } from './getArguments'
+
 //  ====
 //  ARGS
 //  ====
-
-/**
- * Retrieves the cli-arguments from process.argv
- * @returns The array of cli arguments
- */
-export const getArguments = () => process.argv.slice(2)
 
 type ParsedArguments = {
     arguments: string[],
